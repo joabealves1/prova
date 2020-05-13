@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -32,20 +33,36 @@ public class MainActivity extends AppCompatActivity {
         rbsim = findViewById(R.id.rbsim);
         rbnao = findViewById(R.id.rbnao);
         ch1 = findViewById(R.id.ch1);
-        ch1 = findViewById(R.id.ch2);
+        ch2 = findViewById(R.id.ch2);
         edtRendimento = findViewById(R.id.edtRedimento);
         txtResposta1 = findViewById(R.id.txtResposta1);
         txtResposta2 = findViewById(R.id.txtResposta2);
         edtPreco = findViewById(R.id.edtPreco);
 
+        ch1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ch1.isChecked())
+                    ch2.setChecked(false);
+            }
+        });
+
+        ch2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ch2.isChecked())
+                    ch1.setChecked(false);
+            }
+        });
+
     }
 
         public void calcular(View view) {
 
-                int ValorTeto, ValorDemao=1, janela;
+                int ValorDemao=1, lata;
                 float metroq;
-                double area;
-                double janela1;
+                double area, ValorTeto = 0, janela;
+                double janela1, valorReal;
                 float largura, preco, rendimento, comprimento, altura;
 
                 comprimento = Float.parseFloat(edtComprimento.getText().toString());
@@ -55,23 +72,26 @@ public class MainActivity extends AppCompatActivity {
                 preco = Float.parseFloat((edtPreco.getText().toString()));
                 altura = Float.parseFloat(edtAltura.getText().toString());
 
-                if (rbsim.isChecked())
-                    ValorTeto = 1;
-                else
-
-                if(rbnao.isChecked())
-                    ValorTeto = 0;
+                metroq = (float) ((2*((largura*altura)+(altura*comprimento)))-(2.10*0.70));
 
                 if (ch1.isChecked())
                     ValorDemao = 1;
-                else
 
                 if (ch2.isChecked())
                     ValorDemao = 2;
 
-                metroq = comprimento * largura;
-                area = ValorDemao*((metroq/rendimento) - 1.47 - (janela1=1.40));
+                if (rbsim.isChecked())
+                    ValorTeto = largura*comprimento;
+                    metroq = (float) (metroq+ValorTeto);
 
-                txtResposta1.setText(String.format("%.2f", area));
+                if (janela1>0)
+                    janela1 = janela1*(1.40*1.00);
+                    metroq = (float) (metroq-janela1);
+
+                lata = (int) ((metroq*ValorDemao)/rendimento);
+                valorReal = lata*preco;
+
+                txtResposta1.setText(String.valueOf(lata));
+                txtResposta2.setText(String.valueOf(valorReal));
             }
         }
